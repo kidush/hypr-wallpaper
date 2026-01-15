@@ -8,6 +8,42 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// Layout constants
+const (
+	// ListPaneWidthPercent is the percentage of terminal width for the file list
+	ListPaneWidthPercent = 35
+
+	// PaneBorderWidth accounts for borders between panes
+	PaneBorderWidth = 4
+
+	// PaneContentPadding is the padding inside each pane for content
+	PaneContentPadding = 4
+
+	// PaneHeightOffset accounts for top/bottom borders and margins
+	PaneHeightOffset = 4
+
+	// PreviewHeightOffset accounts for preview pane header and borders
+	PreviewHeightOffset = 6
+
+	// ListHeaderOffset accounts for title, path, and spacing in file list
+	ListHeaderOffset = 14
+
+	// MinVisibleItems is the minimum number of items to show in the list
+	MinVisibleItems = 5
+
+	// TruncationSuffix length for "..."
+	TruncationSuffixLen = 3
+
+	// PreviewXOffset is the X position offset for überzug preview
+	PreviewXOffset = 4
+
+	// PreviewYOffset is the Y position offset for überzug preview
+	PreviewYOffset = 3
+
+	// PreviewPadding is internal padding for the preview image
+	PreviewPadding = 2
+)
+
 var (
 	titleStyle = lipgloss.NewStyle().
 			Bold(true).
@@ -63,19 +99,19 @@ func (m Model) View() string {
 		return "Loading..."
 	}
 
-	listWidth := m.width * 35 / 100
-	previewWidth := m.width - listWidth - 4
+	listWidth := m.width * ListPaneWidthPercent / 100
+	previewWidth := m.width - listWidth - PaneBorderWidth
 
-	listContent := m.renderList(listWidth - 4)
+	listContent := m.renderList(listWidth - PaneContentPadding)
 	listPane := listPaneStyle.
 		Width(listWidth).
-		Height(m.height - 4).
+		Height(m.height - PaneHeightOffset).
 		Render(listContent)
 
-	previewContent := m.renderPreview(listWidth, previewWidth-4, m.height-6)
+	previewContent := m.renderPreview(listWidth, previewWidth-PaneContentPadding, m.height-PreviewHeightOffset)
 	previewPane := previewPaneStyle.
 		Width(previewWidth).
-		Height(m.height - 4).
+		Height(m.height - PaneHeightOffset).
 		Render(previewContent)
 
 	return lipgloss.JoinHorizontal(lipgloss.Top, listPane, previewPane)
@@ -96,9 +132,9 @@ func (m Model) renderList(width int) string {
 		b.WriteString(folderStyle.Render("(empty)"))
 		b.WriteString("\n")
 	} else {
-		visibleHeight := m.height - 14
-		if visibleHeight < 5 {
-			visibleHeight = 5
+		visibleHeight := m.height - ListHeaderOffset
+		if visibleHeight < MinVisibleItems {
+			visibleHeight = MinVisibleItems
 		}
 
 		start := 0
@@ -126,9 +162,9 @@ func (m Model) renderList(width int) string {
 				selectedStyle = imageSelectedStyle
 			}
 
-			maxLen := width - 4
+			maxLen := width - PaneContentPadding
 			if len(displayName) > maxLen {
-				displayName = displayName[:maxLen-3] + "..."
+				displayName = displayName[:maxLen-TruncationSuffixLen] + "..."
 			}
 
 			if i == m.cursor {
@@ -156,12 +192,10 @@ func (m Model) renderPreview(listWidth, previewWidth, previewHeight int) string 
 	entry := m.CurrentEntry()
 
 	// Calculate überzug position
-	// x = list pane width + borders
-	// y = top border
-	x := listWidth + 4
-	y := 3
-	maxWidth := previewWidth - 2
-	maxHeight := previewHeight - 2
+	x := listWidth + PreviewXOffset
+	y := PreviewYOffset
+	maxWidth := previewWidth - PreviewPadding
+	maxHeight := previewHeight - PreviewPadding
 
 	if entry == nil {
 		if m.ueberzug != nil {
