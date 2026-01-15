@@ -1,0 +1,13 @@
+# Binary
+hypr-wallpaper
+wallpaper-selector
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
