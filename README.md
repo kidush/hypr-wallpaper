@@ -25,13 +25,13 @@ A TUI file browser for selecting and setting wallpapers on Hyprland using hyprpa
 ### From source
 
 ```bash
-go install github.com/thiagoflins/hypr-wallpaper@latest
+go install github.com/kidush/hypr-wallpaper@latest
 ```
 
 ### Manual build
 
 ```bash
-git clone https://github.com/thiagoflins/hypr-wallpaper.git
+git clone https://github.com/kidush/hypr-wallpaper.git
 cd hypr-wallpaper
 go build -o hypr-wallpaper .
 sudo cp hypr-wallpaper /usr/local/bin/
